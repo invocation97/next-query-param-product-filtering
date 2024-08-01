@@ -19,7 +19,7 @@ Welcome to the Next.js Product Filters Project! This project is created for lear
 
 ## Getting Started
 
-> you can check out the [demo](https://next-query-param-product-filtering.vercel.app/)
+> you can check out the [demo](https://next-query-param-product-filtering.vercel.app/) here
 
 1. **Clone the Repository**
 
