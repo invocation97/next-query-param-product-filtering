@@ -22,7 +22,7 @@ Welcome to the Next.js Product Filters Project! This project is created for lear
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/invocation97/nextjs-product-filters.git
+   git clone https://github.com/invocation97/next-query-param-product-filtering
    ```
 
 2. **Install Dependencies**
@@ -30,7 +30,7 @@ Welcome to the Next.js Product Filters Project! This project is created for lear
    Navigate to the project directory and install the necessary dependencies:
 
    ```bash
-   cd nextjs-product-filters
+   cd next-query-param-product-filtering
    npm install
    ```
 
