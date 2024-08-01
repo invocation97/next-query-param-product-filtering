@@ -1,7 +1,6 @@
 "use client";
-import { useDebounce } from "@/hooks/useDebounce";
-import { ProductFilters } from "@/server/getProducts";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useFilters } from "@/hooks/useFilters";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import {
@@ -16,21 +15,12 @@ import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
 import { Star, X } from "lucide-react";
 import FilterWrapper from "./FilterWrapper";
-import { on } from "events";
 
 type ProductFilterListProps = {
-  onChange: (filters: ProductFilters) => void;
   categories: string[];
 };
-type SortOptionKeys =
-  | "Title A-Z"
-  | "Title Z-A"
-  | "Price low -> high"
-  | "Price high -> low"
-  | "Rating low -> high"
-  | "Rating high -> low";
 
-const sortOptions: Record<SortOptionKeys, string> = {
+const sortOptions: Record<string, string> = {
   "Title A-Z": "title-asc",
   "Title Z-A": "title-desc",
   "Price low -> high": "price-asc",
@@ -38,83 +28,59 @@ const sortOptions: Record<SortOptionKeys, string> = {
   "Rating low -> high": "rating-asc",
   "Rating high -> low": "rating-desc",
 };
-type SortOptions = (typeof sortOptions)[keyof typeof sortOptions];
 
 export default function ProductFilterList({
-  onChange,
   categories,
 }: ProductFilterListProps) {
-  const [search, setSearch] = useState<ProductFilters["search"]>();
-  const [category, setCategory] = useState<ProductFilters["category"]>();
-  const [price, setPrice] = useState<ProductFilters["maxPrice"]>();
-  const [rating, setRating] = useState<ProductFilters["rating"]>();
-  const [sort, setSort] = useState<ProductFilters["sort"]>("title-asc");
+  const { filters, updateFilters } = useFilters();
+  const [search, setSearch] = useState(filters.search || "");
+  const [category, setCategory] = useState(filters.category || "");
+  const [price, setPrice] = useState(filters.maxPrice || 0);
+  const [rating, setRating] = useState<[number, number]>(
+    filters.rating || [0, 5]
+  );
+  const [sort, setSort] = useState(filters.sort || "title-asc");
 
-  const debouncedSearch = useDebounce(search, 500);
-
-  const handleSortChange = useCallback((displayValue: SortOptionKeys) => {
-    const sortValue = sortOptions[displayValue];
-    setSort(sortValue);
-  }, []);
-
-  const getDisplayValue = useCallback((sortValue: ProductFilters["sort"]) => {
-    return (Object.keys(sortOptions) as SortOptionKeys[]).find(
-      (key) => sortOptions[key] === sortValue
-    );
-  }, []);
   useEffect(() => {
-    onChange({
-      search: debouncedSearch,
-      category: category,
-      maxPrice: price,
-      rating: rating,
-      sort: sort,
-    });
-  }, [debouncedSearch, category, price, rating, sort]);
+    updateFilters({ search, category, maxPrice: price, rating, sort });
+  }, [search, category, price, rating, sort, updateFilters]);
 
   return (
     <div className="flex flex-col gap-4 items-start w-full">
       <FilterWrapper>
-        <FilterWrapper>
-          <Label htmlFor="search">Search</Label>
-          <Input
-            type="text"
-            id="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products..."
-          />
-          <FilterWrapper>
-            <Label>Sort by</Label>
-            <Select
-              onValueChange={handleSortChange}
-              defaultValue={getDisplayValue("title-asc")}
-              value={getDisplayValue(sort)}
-            >
-              <SelectTrigger>
-                <SelectValue>{getDisplayValue(sort)}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {Object.keys(sortOptions).map((displayValue) => (
-                    <SelectItem key={displayValue} value={displayValue}>
-                      {displayValue}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </FilterWrapper>
-        </FilterWrapper>
+        <Label htmlFor="search">Search</Label>
+        <Input
+          type="text"
+          id="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products..."
+        />
+        <Label>Sort by</Label>
+        <Select onValueChange={setSort} defaultValue={sort} value={sort}>
+          <SelectTrigger>
+            <SelectValue>
+              {Object.keys(sortOptions).find(
+                (key) => sortOptions[key] === sort
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {Object.keys(sortOptions).map((key) => (
+                <SelectItem key={key} value={sortOptions[key]}>
+                  {key}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </FilterWrapper>
       <div className="flex flex-col items-start gap-4 w-full">
         <h4 className="text-xl font-semibold">Refine your search</h4>
         <FilterWrapper>
           <Label>Category</Label>
-          <Select
-            onValueChange={(value) => setCategory(value)}
-            defaultValue={category}
-          >
+          <Select onValueChange={setCategory} defaultValue={category}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a category">
                 {category || "Select a category"}
@@ -122,7 +88,7 @@ export default function ProductFilterList({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {categories.map((category: string) => (
+                {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>
@@ -136,9 +102,7 @@ export default function ProductFilterList({
           <Select
             name="max-price"
             defaultValue={price?.toString()}
-            onValueChange={(value) =>
-              setPrice(value ? parseInt(value) : undefined)
-            }
+            onValueChange={(value) => setPrice(value ? parseInt(value) : 0)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a price">

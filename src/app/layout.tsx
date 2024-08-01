@@ -6,6 +6,7 @@ import ReactQueryProvider from "@/providers/Provider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
+import { FilterProvider } from "@/context/FilterContext";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,10 +29,12 @@ export default async function RootLayout({
         )}
       >
         <ReactQueryProvider>
-          <Header />
-          {children}
-          <Footer />
-          <ReactQueryDevtools initialIsOpen={false} />
+          <FilterProvider>
+            <Header />
+            {children}
+            <Footer />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </FilterProvider>
         </ReactQueryProvider>
       </body>
     </html>

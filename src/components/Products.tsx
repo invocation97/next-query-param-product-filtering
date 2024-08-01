@@ -1,97 +1,18 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getProducts,
-  ProductFilters,
-  Product as ProductType,
-} from "@/server/getProducts";
+import { getProducts, Product as ProductType } from "@/server/getProducts";
 import Product from "./Product";
 import ProductFilterList from "./filters/ProductFilterList";
-import { useRouter } from "next/navigation";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Filter } from "lucide-react";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import ProductSkeleton from "./skeletons/ProductSkeleton";
+import { useFilters } from "@/hooks/useFilters";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function Products({ categories }: { categories: any }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [search, setSearch] = useState<ProductFilters["search"]>();
-  const [category, setCategory] = useState<ProductFilters["category"]>();
-  const [price, setPrice] = useState<ProductFilters["maxPrice"]>();
-  const [rating, setRating] = useState<ProductFilters["rating"]>();
-  const [sort, setSort] = useState<ProductFilters["sort"]>();
-
-  const params = useMemo(
-    () => new URLSearchParams(searchParams),
-    [searchParams]
-  );
-
-  const handleSearch = (term: string) => {
-    if (term) {
-      params.set("query", term);
-    } else {
-      params.delete("query");
-    }
-    router.push(`${pathname}?${params.toString()}`);
-    setSearch(term);
-  };
-
-  const handleCategory = (category: string) => {
-    if (category) {
-      params.set("category", category);
-    } else {
-      params.delete("category");
-    }
-    router.push(`${pathname}?${params.toString()}`);
-    setCategory(category);
-  };
-
-  const handleMaxPrice = (price: number) => {
-    if (price) {
-      params.set("price", price.toString());
-    } else {
-      params.delete("price");
-    }
-    router.push(`${pathname}?${params.toString()}`);
-    setPrice(price);
-  };
-
-  const handleRating = (rating: [number, number]) => {
-    const [minRating, maxRating] = rating;
-    if (minRating !== 0 || maxRating !== 5) {
-      params.set("rating", rating.toString().replace(",", "-"));
-    } else {
-      params.delete("rating");
-    }
-    router.push(`${pathname}?${params.toString()}`);
-    setRating(rating);
-  };
-
-  const handleSort = (sort: string) => {
-    if (sort) {
-      params.set("sort", sort);
-    } else {
-      params.set("sort", "relevance");
-    }
-    router.push(`${pathname}?${params.toString()}`);
-    setSort(sort);
-  };
-
-  const handleFilterChange = useCallback(
-    (filters: ProductFilters) => {
-      handleSearch(filters.search || "");
-      handleCategory(filters.category || "");
-      handleMaxPrice(filters.maxPrice || 0);
-      handleRating(filters.rating || [0, 5]);
-      handleSort(filters.sort || "title-asc");
-    },
-    [router, pathname, params]
-  );
+  const { filters } = useFilters();
 
   const {
     data: products,
@@ -99,61 +20,28 @@ export default function Products({ categories }: { categories: any }) {
     isFetching,
     isError,
   } = useQuery({
-    queryKey: [
-      "products",
-      {
-        search: search,
-        category: category,
-        maxPrice: price,
-        rating: rating,
-        sort: sort,
-      },
-    ],
-    queryFn: async () =>
-      getProducts({
-        search: search,
-        category: category,
-        maxPrice: price,
-        rating: rating,
-        sort: sort,
-      }),
+    queryKey: ["products", filters],
+    queryFn: async () => getProducts(filters),
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] justify-between gap-8 container relative">
+    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] justify-between gap-8 relative">
       <div className="hidden md:flex flex-col items-start gap-4 w-full">
         <h3 className="font-bold text-3xl">Filters</h3>
-        <ProductFilterList
-          onChange={(filters) => {
-            handleSearch(filters.search || "");
-            handleCategory(filters.category || "");
-            handleMaxPrice(filters.maxPrice || 0);
-            handleRating(filters.rating || [0, 5]);
-            handleSort(filters.sort || "title-asc");
-          }}
-          categories={categories}
-        />
+        <ProductFilterList categories={categories} />
       </div>
-      <div className="fixed bottom-1 left-[50%] -translate-x-[50%] z-20 w-full max-w-sm block md:hidden mx-2">
+      <div className="fixed bottom-5 left-[50%] -translate-x-[50%] z-20 w-full md:hidden flex items-center justify-center">
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant={"outline"} className="w-full">
+            <Button variant={"default"} size={"lg"} className="w-1/2 mx-auto">
               Filters
               <Filter className="w-6 h-6" />
             </Button>
           </SheetTrigger>
           <SheetContent side={"bottom"}>
+            <DialogTitle className="sr-only">Filters</DialogTitle>
             <ScrollArea className="h-full">
-              <ProductFilterList
-                onChange={(filters) => {
-                  handleSearch(filters.search || "");
-                  handleCategory(filters.category || "");
-                  handleMaxPrice(filters.maxPrice || 0);
-                  handleRating(filters.rating || [0, 5]);
-                  handleSort(filters.sort || "title-asc");
-                }}
-                categories={categories}
-              />
+              <ProductFilterList categories={categories} />
             </ScrollArea>
           </SheetContent>
         </Sheet>
