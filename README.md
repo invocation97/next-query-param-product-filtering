@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js Product Filters Project
+
+Welcome to the Next.js Product Filters Project! This project is created for learning purposes and serves as an example of building a product filtering system using query params for enhanced SEO and better overview of what is being searched for.
+
+## Technologies Used
+
+- **Next.js 14.2.5**: A React framework for server-side rendering and static site generation.
+- **Tailwind CSS**: A utility-first CSS framework for styling.
+- **Shadcn UI**: A UI library for building responsive and accessible user interfaces.
+- **Tanstack Query**: A powerful data-fetching library for managing server state in React applications.
+- **DALL-E**: Used to generate the hero image and favicon for the project, leveraging OpenAI's image generation capabilities.
+- **Fake Store API**: A free API providing fake data for testing and prototyping e-commerce applications. This project uses it to fetch product data.
+
+## Features
+
+- **Product Filters**: Users can filter products by search term, category, price, rating, and sorting options.
+- **Dynamic URL Parameters**: The filtering system updates the URL with search parameters, allowing users to share filtered results easily.
+- **Responsive Design**: The UI is responsive and works well on both desktop and mobile devices.
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the Repository**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   ```bash
+   git clone https://github.com/invocation97/nextjs-product-filters.git
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install Dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   Navigate to the project directory and install the necessary dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+   ```bash
+   cd nextjs-product-filters
+   npm install
+   ```
 
-## Learn More
+3. **Run the Development Server**
 
-To learn more about Next.js, take a look at the following resources:
+   Start the development server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   The project will be available at `http://localhost:3000`.
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Feel free to clone or fork this repository for your learning and experimentation. If you find the project helpful, please consider starring the repository on GitHub. We welcome any feedback or suggestions to improve the project!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Acknowledgments
+
+Special thanks to the creators of the libraries and tools used in this project, and to OpenAI for providing DALL-E for generating the hero image and favicon.
+
+## Contact
+
+For any questions or feedback, please open an issue on GitHub or contact me directly.
+
+[Star the Repository](https://github.com/invocation97/nextjs-product-filters)
+
+---
