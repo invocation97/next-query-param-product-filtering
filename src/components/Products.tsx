@@ -31,71 +31,56 @@ export default function Products({ categories }: { categories: any }) {
     [searchParams]
   );
 
-  const handleSearch = useCallback(
-    (term: string) => {
-      if (term) {
-        params.set("query", term);
-      } else {
-        params.delete("query");
-      }
-      router.push(`${pathname}?${params.toString()}`);
-      setSearch(term);
-    },
-    [params, router, pathname]
-  );
+  const handleSearch = (term: string) => {
+    if (term) {
+      params.set("query", term);
+    } else {
+      params.delete("query");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+    setSearch(term);
+  };
 
-  const handleCategory = useCallback(
-    (category: string) => {
-      if (category) {
-        params.set("category", category);
-      } else {
-        params.delete("category");
-      }
-      router.push(`${pathname}?${params.toString()}`);
-      setCategory(category);
-    },
-    [params, router, pathname]
-  );
+  const handleCategory = (category: string) => {
+    if (category) {
+      params.set("category", category);
+    } else {
+      params.delete("category");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+    setCategory(category);
+  };
 
-  const handleMaxPrice = useCallback(
-    (price: number) => {
-      if (price) {
-        params.set("price", price.toString());
-      } else {
-        params.delete("price");
-      }
-      router.push(`${pathname}?${params.toString()}`);
-      setPrice(price);
-    },
-    [params, router, pathname]
-  );
+  const handleMaxPrice = (price: number) => {
+    if (price) {
+      params.set("price", price.toString());
+    } else {
+      params.delete("price");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+    setPrice(price);
+  };
 
-  const handleRating = useCallback(
-    (rating: [number, number]) => {
-      const [minRating, maxRating] = rating;
-      if (minRating !== 0 || maxRating !== 5) {
-        params.set("rating", rating.toString().replace(",", "-"));
-      } else {
-        params.delete("rating");
-      }
-      router.push(`${pathname}?${params.toString()}`);
-      setRating(rating);
-    },
-    [params, router, pathname]
-  );
+  const handleRating = (rating: [number, number]) => {
+    const [minRating, maxRating] = rating;
+    if (minRating !== 0 || maxRating !== 5) {
+      params.set("rating", rating.toString().replace(",", "-"));
+    } else {
+      params.delete("rating");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+    setRating(rating);
+  };
 
-  const handleSort = useCallback(
-    (sort: string) => {
-      if (sort) {
-        params.set("sort", sort);
-      } else {
-        params.set("sort", "relevance");
-      }
-      router.push(`${pathname}?${params.toString()}`);
-      setSort(sort);
-    },
-    [params, router, pathname]
-  );
+  const handleSort = (sort: string) => {
+    if (sort) {
+      params.set("sort", sort);
+    } else {
+      params.set("sort", "relevance");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+    setSort(sort);
+  };
 
   const handleFilterChange = useCallback(
     (filters: ProductFilters) => {
@@ -105,7 +90,7 @@ export default function Products({ categories }: { categories: any }) {
       handleRating(filters.rating || [0, 5]);
       handleSort(filters.sort || "title-asc");
     },
-    [handleSearch, handleCategory, handleMaxPrice, handleRating, handleSort]
+    [router, pathname, params]
   );
 
   const {
@@ -139,7 +124,13 @@ export default function Products({ categories }: { categories: any }) {
       <div className="hidden md:flex flex-col items-start gap-4 w-full">
         <h3 className="font-bold text-3xl">Filters</h3>
         <ProductFilterList
-          onChange={handleFilterChange}
+          onChange={(filters) => {
+            handleSearch(filters.search || "");
+            handleCategory(filters.category || "");
+            handleMaxPrice(filters.maxPrice || 0);
+            handleRating(filters.rating || [0, 5]);
+            handleSort(filters.sort || "title-asc");
+          }}
           categories={categories}
         />
       </div>

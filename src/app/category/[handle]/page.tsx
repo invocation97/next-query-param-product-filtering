@@ -1,4 +1,5 @@
 import Product from "@/components/Product";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import { getProductsForCategory } from "@/server/getProducts";
 
 type CategoryProps = {
@@ -6,6 +7,18 @@ type CategoryProps = {
     handle: string;
   };
 };
+export async function generateMetadata({
+  params,
+}: {
+  params: { handle: string };
+}) {
+  const capitalizedHandle = capitalizeFirstLetter(params.handle);
+
+  return {
+    title: `${capitalizedHandle} | Category`,
+    description: `Products in the category: ${params.handle}`,
+  };
+}
 
 export default async function CategoryPage({ params }: CategoryProps) {
   const products = await getProductsForCategory(params.handle);

@@ -52,20 +52,6 @@ export default function ProductFilterList({
 
   const debouncedSearch = useDebounce(search, 500);
 
-  const handleOnChange = useCallback(() => {
-    onChange({
-      search: debouncedSearch,
-      category,
-      maxPrice: price,
-      rating,
-      sort,
-    });
-  }, [debouncedSearch, category, price, rating, sort]);
-
-  useEffect(() => {
-    handleOnChange();
-  }, []);
-
   const handleSortChange = useCallback((displayValue: SortOptionKeys) => {
     const sortValue = sortOptions[displayValue];
     setSort(sortValue);
@@ -76,6 +62,15 @@ export default function ProductFilterList({
       (key) => sortOptions[key] === sortValue
     );
   }, []);
+  useEffect(() => {
+    onChange({
+      search: debouncedSearch,
+      category: category,
+      maxPrice: price,
+      rating: rating,
+      sort: sort,
+    });
+  }, [debouncedSearch, category, price, rating, sort]);
 
   return (
     <div className="flex flex-col gap-4 items-start w-full">
