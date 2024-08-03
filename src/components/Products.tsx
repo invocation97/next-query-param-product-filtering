@@ -7,11 +7,15 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Filter } from "lucide-react";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
-import ProductSkeleton from "./skeletons/ProductSkeleton";
 import { useFilters } from "@/hooks/useFilters";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import ProductSkeleton from "./skeletons/ProductSkeleton";
 
-export default function Products({ categories }: { categories: any }) {
+type ProductProps = {
+  categories: string[];
+};
+
+export default function Products({ categories }: ProductProps) {
   const { filters } = useFilters();
 
   const {
@@ -20,12 +24,12 @@ export default function Products({ categories }: { categories: any }) {
     isFetching,
     isError,
   } = useQuery({
-    queryKey: ["products", filters],
+    queryKey: ["products", { filters }],
     queryFn: async () => getProducts(filters),
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] justify-between gap-8 relative">
+    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] justify-between gap-8 py-4 md:container relative">
       <div className="hidden md:flex flex-col items-start gap-4 w-full">
         <h3 className="font-bold text-3xl">Filters</h3>
         <ProductFilterList categories={categories} />

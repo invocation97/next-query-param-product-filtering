@@ -1,4 +1,3 @@
-// useFilters.ts
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { ProductFilters } from "@/server/getProducts";
@@ -29,13 +28,16 @@ export const useFilters = () => {
       } else {
         params.delete("category");
       }
-      if (newFilters.maxPrice !== undefined) {
+      if (newFilters.maxPrice) {
         params.set("price", newFilters.maxPrice.toString());
       } else {
         params.delete("price");
       }
       if (newFilters.rating) {
-        params.set("rating", newFilters.rating.toString().replace(",", "-"));
+        const [minRating, maxRating] = newFilters.rating;
+        if (minRating !== 0 && maxRating !== 5) {
+          params.set("rating", newFilters.rating.toString().replace(",", "-"));
+        }
       } else {
         params.delete("rating");
       }

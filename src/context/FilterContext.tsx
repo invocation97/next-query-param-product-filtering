@@ -9,8 +9,14 @@ type FilterContextProps = {
 
 const FilterContext = createContext<FilterContextProps | undefined>(undefined);
 
-export const FilterProvider = ({ children }: { children: React.ReactNode }) => {
-  const [filters, setFilters] = useState<ProductFilters>({});
+export const FilterProvider = ({
+  children,
+  initialFilters,
+}: {
+  children: React.ReactNode;
+  initialFilters: ProductFilters;
+}) => {
+  const [filters, setFilters] = useState<ProductFilters>(initialFilters);
 
   const value = useMemo(() => ({ filters, setFilters }), [filters]);
 

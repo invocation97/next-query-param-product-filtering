@@ -29,12 +29,10 @@ export default async function RootLayout({
         )}
       >
         <ReactQueryProvider>
-          <FilterProvider>
-            <Header />
-            {children}
-            <Footer />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </FilterProvider>
+          <Header />
+          {children}
+          <Footer />
+          <ReactQueryDevtools initialIsOpen={false} />
         </ReactQueryProvider>
       </body>
     </html>
